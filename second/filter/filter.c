@@ -1,57 +1,86 @@
-#include <unistd.h>   // for read, write
-#include <string.h>   // for strlen, memmem
-#include <stdlib.h>   // for exit
-#include <stdio.h>    // for perror
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 64 // Or use whatever they define
+# define BUFFER_SIZE 10
 #endif
 
-void	filter_line(const char *line, const char *target)
+char *get_next_line(int fd)
 {
-	const char	*p = line;
-	size_t		target_len = strlen(target);
+	static char buf[BUFFER_SIZE];
+	static int i = 0, r = 0;
+	char *line;
+	int j = 0;
 
-	while (*p)
+	if (fd < 0 || BUFFER_SIZE <= 0 || !(line=malloc(10000)))
+		return (NULL);
+	while (1)
 	{
-		void *match = memmem(p, strlen(p), target, target_len);
-		if (!match)
+		if (i >= r)
 		{
-			write(1, p, strlen(p)); // Print the rest if no match
-			break;
+			i = 0;
+			r = read(fd, buf, BUFFER_SIZE);
+			if (r <= 0)
+			break ;
 		}
-		// Print everything before the match
-		write(1, p, (char *)match - p);
-		// Print replacement ***
-		write(1, "***", 3);
-		// Move pointer past the matched word
-		p = (char *)match + target_len;
+		line[j++] = buf[i++];
+		if (line[j - 1] == '\n')
+		break ;
+	}
+	if (j)
+	{
+	line[j] = 0;
+	return (line);
+	}
+	else
+	{
+	free(line);
+	return (NULL);
 	}
 }
 
-int	main(int argc, char **argv)
+void filter_line(char *line, char *target)
 {
-	char	buffer[BUFFER_SIZE + 1];
-	ssize_t	bytes_read;
+	const char *p = line;
+	char *match;
+	int t_len = strlen(target);
 
-	if (argc != 2)
+	while(*p)
 	{
-		write(2, "Usage: ./filter <target>\n", 26);
-		return (1);
+		if (!(match = memmem(p, strlen(p), target, t_len)))
+		{
+		write(1, p, strlen(p));
+		return ;
+		}
+		else
+		{
+			write(1, p, match - p);
+			int i = 0;
+			while (i < t_len)
+			{
+				write(1, "*", 1);
+				i++;
+			}
+			p = match + t_len;
+		}
 	}
+}
 
-	while ((bytes_read = read(0, buffer, BUFFER_SIZE)) > 0)
+int main(int params, char **argv)
+{
+	char *line;
+
+	if (params != 2)
 	{
-		buffer[bytes_read] = '\0'; // Null-terminate for memmem
-		filter_line(buffer, argv[1]);
+	printf("USAGE: ./filter <target>");
+	return (1);
 	}
-
-	if (bytes_read == -1)
+	while((line = get_next_line(0)))
 	{
-		perror("read");
-		return (1);
+	filter_line(line, argv[1]);
+	free(line);
 	}
-
 	return (0);
 }
-
