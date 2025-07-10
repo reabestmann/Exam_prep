@@ -1,4 +1,7 @@
 /*
+
+--- CAN BE USED FOR FIX_BROKEN_GNL------------------------------------
+
 Assignment name   : get_next_line
 Expected files    : get_next_line.c get_next_line.h
 Allowed functions : read, free, malloc

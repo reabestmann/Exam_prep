@@ -1,3 +1,4 @@
+#define _GNU_SOURCE //for string.h
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,8 +15,16 @@ char *get_next_line(int fd)
 	char *line;
 	int j = 0;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || !(line=malloc(10000)))
+	if (fd < 0 || BUFFER_SIZE <= 0)
+	{
+		write(2, "Error: Invalid file descriptor or BUFFER_SIZE\n", 46);
 		return (NULL);
+	}
+	if (!(line=malloc(10000)))
+	{
+		perror("Error");
+		return (NULL);
+	}
 	while (1)
 	{
 		if (i >= r)
@@ -23,7 +32,14 @@ char *get_next_line(int fd)
 			i = 0;
 			r = read(fd, buf, BUFFER_SIZE);
 			if (r <= 0)
-			break ;
+			{
+				if (r < 0)
+				{
+					perror("Error");
+					return (NULL);
+				}
+				break ;
+			}
 		}
 		line[j++] = buf[i++];
 		if (line[j - 1] == '\n')
@@ -74,13 +90,13 @@ int main(int params, char **argv)
 
 	if (params != 2)
 	{
-	printf("USAGE: ./filter <target>");
-	return (1);
+		printf("USAGE: ./filter <target>");
+		return (1);
 	}
 	while((line = get_next_line(0)))
 	{
-	filter_line(line, argv[1]);
-	free(line);
+		filter_line(line, argv[1]);
+		free(line);
 	}
 	return (0);
 }

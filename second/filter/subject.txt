@@ -1,0 +1,16 @@
+(short ver)
+
+Assignment name: filter
+Expected files: filter.c
+Allowed functions & globals: read, write, strlen, memmem, memmove, malloc, calloc, realloc, free, printf, fprintf, stdout, stderr, perror
+
+Write a program that will take one and only one argument s. It will then read from stdin and write all the sonten read in stdout except that everz occurence of s must be replaces by '*'.
+
+./filter abc
+will behave in the same way as sed 's/abc/***/g'
+
+In case of error during a read or a malloc, you must write "Error: " followed by the error message in stderr and return 1. If the programm is called without arguments or with an empty argument or with multiple arguments, it must return 1. 
+For example this should work:
+
+echo 'abcdefaaaaaabcdeabcdabc' | ./filter abc | cat -e
+***defaaaaa***de***d***

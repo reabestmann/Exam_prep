@@ -1,0 +1,69 @@
+(short ver)
+
+Assignment name: n_queens
+Expected files: *.c, *.h
+Allowed functions: atoi, printf, write, malloc, calloc, relalloc, free
+
+The N queens problem is a classic puzzle that invlolves placing N queen on an N * N chessboard in such a way tha no queens threated each other. Please refer to the files attached to this subject.
+
+Write a program that will print all the solutions to the n queens problem for a n given as an argument. 
+We will not test with negative values. 
+The order of the solutions is not important. 
+You will display the solutions under the following format:
+<p1> <p2> <p3> ...\n
+Where pn are the line index of the queen in each column starting from 0. For instance, if you want to place your queens like this:
+
+0: x x Q x
+1: Q x x x
+2: x x x Q
+3: x Q x x
+
+You must provide the following output:
+1302
+
+./n_queens 2 | cat -e
+./n_queens 4 | cat -e
+1302$
+2031$
+./n_queens 7 | cat -e
+0246135$
+0362514$
+0415263$
+0531642$
+1306425$
+1350246$
+1403625$
+1420635$
+1463025$
+1526304$
+1542036$
+1603524$
+1642035$
+2053146$
+2063145$
+2413605$
+2415306$
+2513406$
+2516304$
+2530416$
+2534610$
+2536041$
+2603415$
+2630415$
+3015264$
+3142056$
+3162045$
+3410265$
+3415206$
+3514206$
+3542061$
+3602514$
+3641502$
+3651042$
+4015263$
+4152036$
+4250136$
+4253160$
+4260315$
+4265130$
+
